@@ -75,6 +75,13 @@ body{
     margin-top:10px;
 }
 
+#errorhandle{
+    text-align:left;
+    color:red;
+    font-size:13px;
+    margin-top:10px;
+}
+
 /* ===== RESPONSIVE ===== */
 
 @media(max-width:420px){
@@ -162,10 +169,20 @@ body{
     margin-bottom:10px;
     border-radius:8px;
     transition:0.2s;
+    width: 300px;
+    text-decoration: none;
+    color: black;
+}
+
+#problemsContainer{
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap : 15px;
+    margin-top: 15px;
 }
 
 .problem:hover{
-    transform:scale(1.01);
+    transform:scale(1.04);
 }
 
 .solved{
@@ -175,8 +192,6 @@ body{
 .attempted{
     border-left:6px solid #dc3545;
 }
-
-/* page distribution */
 
 #pagination{
     margin-top:20px;

@@ -5,9 +5,10 @@ const btn = document.getElementById("saveHandle");
 btn.addEventListener("click", () => {
     const handle = document.getElementById("handleInput").value;
     if(handle === ""){
-        alert("Enter handle");
+        document.getElementById("errorhandle").innerText = "User Handle Name not Entered";
         return;
     }
+    document.getElementById("errorhandle").innerText = ""
     localStorage.setItem("cf_handle", handle);
     loadUserData(handle);
     loadSubmissions(handle);
@@ -38,7 +39,6 @@ async function loadSubmissions(handle){
             }
         }
     });
-
     document.getElementById("stats").innerHTML += `
     <h3>Solved: ${solvedSet.size}</h3>
     <h3>Attempted: ${attemptedSet.size}</h3>
@@ -48,8 +48,9 @@ async function loadSubmissions(handle){
 
 let allProblems = [];
 let currentPage = 1;
-const perPage = 50;
+const perPage = 51;
 let filteredSubs = [];
+let list = [];
 
 async function loadProblems(){
     const res = await fetch("https://codeforces.com/api/problemset.problems");
@@ -60,7 +61,7 @@ async function loadProblems(){
 function renderProblems(){
     const start = (currentPage - 1) * perPage;
     const end = start + perPage;
-    const list = filteredSubs.length > 0 ? filteredSubs : submissionsList;
+    list = filteredSubs.length > 0 ? filteredSubs : submissionsList;
     const pageSubs = list.slice(start, end);
     const questions = pageSubs.map((sub) => {
         const problem = sub.problem;
@@ -73,12 +74,14 @@ function renderProblems(){
             statusClass = "attempted";
         }
         return `
+        <a href="https://codeforces.com/problemset/problem/${problem.contestId}/${problem.index}" target="_blank"
             <div class="problem ${statusClass}">
                 <b>${problem.name}</b>
                 <p>Contest: ${key}</p>
-                <p>Rating: ${sub.problem.rating}</p>
+                <p>Rating: ${sub.problem.rating || 0}</p>
                 <p>Verdict: ${sub.verdict}</p>
             </div>
+        </a>
         `;
     }).join("");
     document.getElementById("problemsContainer").innerHTML = questions;
@@ -87,12 +90,12 @@ function renderProblems(){
 
 function renderPagination(){
     const totalPages = Math.ceil(list.length / perPage);
-    const problem = `
+    const navigation = `
         <button class="page-btn" onclick="prevPage()">Prev</button>
         <span>Page ${currentPage} / ${totalPages}</span>
         <button class="page-btn" onclick="nextPage()">Next</button>
     `;
-    document.getElementById("pagination").innerHTML = problem;
+    document.getElementById("pagination").innerHTML = navigation;
 }
 
 function nextPage(){
@@ -100,25 +103,66 @@ function nextPage(){
     if(currentPage < totalPages){
         currentPage++;
         renderProblems();
-        renderPagination();
     }
 }
 function prevPage(){
     if(currentPage > 1){
         currentPage--;
         renderProblems();
-        renderPagination();
     }
 }
 
 const search = document.getElementById("searchBox");
-search.addEventListener("input",(e) => {
+search.addEventListener("input",() => {
     const value = search.value.toLowerCase();
     filteredSubs = submissionsList.filter((sub) => {
         const name = sub.problem.name.toLowerCase()
         return name.includes(value)
     })
-    currentPage = 1
-    renderProblems()
-    renderPagination()
+    currentPage = 1;
+    renderProblems();
+})
+
+const sort = document.getElementById("sortSelect");
+sort.addEventListener("change",() => {
+    const value = sort.value;
+    if (value === "low") {
+        list.sort((a,b) => {
+            return (a.problem.rating || 0) - (b.problem.rating || 0)
+        })
+    }
+    else if (value === "high"){
+        list.sort((a,b) => {
+            return (b.problem.rating || 0) - (a.problem.rating || 0)
+        })
+    }
+    else {
+        filteredSubs = []
+    }
+    currentPage = 1;
+    renderProblems();
+})
+
+const promlemtype = document.getElementById("filterSelect");
+promlemtype.addEventListener("change",() => {
+    const value = promlemtype.value;
+    if (value === "solved") {
+    filteredSubs = submissionsList.filter((q) => {
+            if (q.verdict === "OK") {
+                return true
+            }
+        })
+    }
+    else if (value === "attempted") {
+        filteredSubs = submissionsList.filter((q) => {
+            if (q.verdict === "WRONG_ANSWER") {
+                return true
+            }
+        })
+    }
+    else {
+        filteredSubs = []
+    }
+    currentPage = 1;
+    renderProblems();
 })

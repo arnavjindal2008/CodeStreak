@@ -12,8 +12,21 @@
         <input type="text" id="handleInput" placeholder="Enter Codeforces Handle Name">
         <button id="saveHandle">Load Data</button>
     </div>
+    <p id="errorhandle"></p>
     <div id="stats"></div>
     <input type="text" id="searchBox" placeholder="Search Problems">
+    <div class="controls">
+        <select id="sortSelect">
+            <option value="">Sort By</option>
+            <option value="low">Rating Low → High</option>
+            <option value="high">Rating High → Low</option>
+        </select>
+        <select id="filterSelect">
+            <option value="all">All Problems</option>
+            <option value="solved">Accepted</option>
+            <option value="attempted">Wrong Answer</option>
+        </select>
+    </div>
     <div id="problemsContainer"></div>
     <div id="pagination"></div>
 </div>
