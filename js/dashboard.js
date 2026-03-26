@@ -112,7 +112,7 @@ function prevPage(){
 }
 
 const search = document.getElementById("searchBox");
-search.addEventListener("keyup",(e) => {
+search.addEventListener("input",(e) => {
     const value = search.value.toLowerCase();
     filteredSubs = submissionsList.filter((sub) => {
         const name = sub.problem.name.toLowerCase()
