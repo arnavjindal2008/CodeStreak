@@ -166,3 +166,9 @@ promlemtype.addEventListener("change",() => {
     currentPage = 1;
     renderProblems();
 })
+
+// logout 
+const logoutbtn = document.getElementById("logout")
+logoutbtn.addEventListener("click", () => {
+    window.location.href = "index.html"
+})

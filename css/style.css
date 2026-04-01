@@ -146,6 +146,10 @@ body{
     background:#357bd8;
 }
 
+#stats:empty{
+    display: none;
+}
+
 #stats{
     background:white;
     padding:15px;
@@ -212,4 +216,19 @@ body{
 .page-btn:hover{
     background:#4a90e2;
     color:white;
+}
+
+#logout {
+    background-color: red;
+    color: white;
+    width: 100px;
+    height: 40px;
+    padding: 10px;
+    font-size: 15px;
+    position: absolute;
+    border: none;
+    border-radius: 10px;
+    top: 10px;
+    right: 20px;
+    cursor: pointer;
 }
