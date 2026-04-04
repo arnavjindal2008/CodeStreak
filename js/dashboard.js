@@ -2,6 +2,17 @@ let solvedSet = new Set();
 let attemptedSet = new Set();
 let submissionsList = [];
 const btn = document.getElementById("saveHandle");
+
+document.addEventListener("DOMContentLoaded", () => {
+    const savedHandle = localStorage.getItem("cf_handle");
+
+    if (savedHandle) {
+        loadSubmissions(savedHandle);
+        loadUserData(savedHandle);
+        loadProblems();
+    }
+});
+
 btn.addEventListener("click", () => {
     const handle = document.getElementById("handleInput").value;
     if(handle === ""){
@@ -16,34 +27,45 @@ btn.addEventListener("click", () => {
 });
 
 async function loadUserData(handle){
-    const res = await fetch(`https://codeforces.com/api/user.info?handles=${handle}`);
-    const data = await res.json();
-    const user = data.result[0];
-    document.getElementById("stats").innerHTML = `
-        <h3>Name: ${user.firstName} ${user.lastName}</h3>
-        <h3>Rating: ${user.rating || "Unrated"} , Max Rating: ${user.maxRating || "Unrated"}</h3>
-    `;
+    try {
+        const res = await fetch(`https://codeforces.com/api/user.info?handles=${handle}`);
+        const data = await res.json();
+        const user = data.result[0];
+        document.getElementById("stats").innerHTML = `
+            <h3>Username: ${localStorage.getItem("cf_handle")}
+            <h3>Name: ${user.firstName || ""} ${user.lastName || ""}</h3>
+            <h3>Rating: ${user.rating || "Unrated"} , Max Rating: ${user.maxRating || "Unrated"}</h3>
+        `;
+    }
+    catch(err) {
+        document.getElementById("stats").innerHTML = "<p style='color:red;'>Error Occurred Please Retry !!</p>";
+    }
 }
 
 async function loadSubmissions(handle){
-    const res = await fetch(`https://codeforces.com/api/user.status?handle=${handle}`);
-    const data = await res.json();
-    const submissions = data.result;
-    submissions.forEach((sub) => {
-        const key = sub.problem.contestId + "-" + sub.problem.index;
-        if(sub.verdict === "OK"){
-            solvedSet.add(key);
-        }else{
-            if(!solvedSet.has(key)){
-                attemptedSet.add(key);
+    try {
+        const res = await fetch(`https://codeforces.com/api/user.status?handle=${handle}`);
+        const data = await res.json();
+        const submissions = data.result;
+        submissions.forEach((sub) => {
+            const key = sub.problem.contestId + "-" + sub.problem.index;
+            if(sub.verdict === "OK"){
+                solvedSet.add(key);
+            }else{
+                if(!solvedSet.has(key)){
+                    attemptedSet.add(key);
+                }
             }
-        }
-    });
-    document.getElementById("stats").innerHTML += `
-    <h3>Solved: ${solvedSet.size}</h3>
-    <h3>Attempted: ${attemptedSet.size}</h3>
-    `;
-    submissionsList = submissions;
+        });
+        document.getElementById("details").innerHTML = `
+        <h3>Solved: ${solvedSet.size}</h3>
+        <h3>Pending: ${attemptedSet.size}</h3>
+        `;
+        submissionsList = submissions;
+    }
+    catch(err) {
+        document.getElementById("stats").innerHTML = "<p style='color:red;'>Error Occurred Please Retry !!</p>";
+    }
 }
 
 let allProblems = [];
@@ -53,49 +75,64 @@ let filteredSubs = [];
 let list = [];
 
 async function loadProblems(){
-    const res = await fetch("https://codeforces.com/api/problemset.problems");
-    const data = await res.json();
-    allProblems = data.result.problems;
-    renderProblems();
+    try {
+        const res = await fetch("https://codeforces.com/api/problemset.problems");
+        const data = await res.json();
+        allProblems = data.result.problems;
+        renderProblems();
+    }
+    catch(err) {
+        document.getElementById("stats").innerHTML = "<p style='color:red;'>Error Occurred Please Retry !!</p>";
+    }
 }
-function renderProblems(){
-    const start = (currentPage - 1) * perPage;
-    const end = start + perPage;
-    list = filteredSubs.length > 0 ? filteredSubs : submissionsList;
-    const pageSubs = list.slice(start, end);
-    const questions = pageSubs.map((sub) => {
-        const problem = sub.problem;
-        const key = problem.contestId + "-" + problem.index;
-        let statusClass = "";
-        if(sub.verdict === "OK"){
-            statusClass = "solved";
-        }
-        else{
-            statusClass = "attempted";
-        }
-        return `
-        <a href="https://codeforces.com/problemset/problem/${problem.contestId}/${problem.index}" target="_blank"
-            <div class="problem ${statusClass}">
-                <b>${problem.name}</b>
-                <p>Contest: ${key}</p>
-                <p>Rating: ${sub.problem.rating || 0}</p>
-                <p>Verdict: ${sub.verdict}</p>
-            </div>
-        </a>
-        `;
-    }).join("");
-    document.getElementById("problemsContainer").innerHTML = questions;
-    renderPagination();
+async function renderProblems(){
+    try {
+        const start = (currentPage - 1) * perPage;
+        const end = start + perPage;
+        list = filteredSubs.length > 0 ? filteredSubs : submissionsList;
+        const pageSubs = list.slice(start, end);
+        const questions = pageSubs.map((sub) => {
+            const problem = sub.problem;
+            const key = problem.contestId + "-" + problem.index;
+            let statusClass = "";
+            if(sub.verdict === "OK"){
+                statusClass = "solved";
+            }
+            else{
+                statusClass = "attempted";
+            }
+            return `
+            <a href="https://codeforces.com/problemset/problem/${problem.contestId}/${problem.index}" target="_blank"
+                <div class="problem ${statusClass}">
+                    <b>${problem.name}</b>
+                    <p>Contest: ${key}</p>
+                    <p>Rating: ${sub.problem.rating || 0}</p>
+                    <p>Verdict: ${sub.verdict}</p>
+                </div>
+            </a>
+            `;
+        }).join("");
+        document.getElementById("problemsContainer").innerHTML = questions;
+        renderPagination();
+    }
+    catch(err) {
+        document.getElementById("stats").innerHTML = "<p style='color:red;'>Error Occurred Please Retry !!</p>";
+    }
 }
 
-function renderPagination(){
-    const totalPages = Math.ceil(list.length / perPage);
-    const navigation = `
-        <button class="page-btn" onclick="prevPage()">Prev</button>
-        <span>Page ${currentPage} / ${totalPages}</span>
-        <button class="page-btn" onclick="nextPage()">Next</button>
-    `;
-    document.getElementById("pagination").innerHTML = navigation;
+async function renderPagination(){
+    try {
+        const totalPages = Math.ceil(list.length / perPage);
+        const navigation = `
+            <button class="page-btn" onclick="prevPage()">Prev</button>
+            <span>Page ${currentPage} / ${totalPages}</span>
+            <button class="page-btn" onclick="nextPage()">Next</button>
+        `;
+        document.getElementById("pagination").innerHTML = navigation;
+    }
+    catch(err) {
+        document.getElementById("stats").innerHTML = "<p style='color:red;'>Error Occurred Please Retry !!</p>";
+    }
 }
 
 function nextPage(){
