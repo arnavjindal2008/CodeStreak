@@ -21,6 +21,9 @@ btn.addEventListener("click", () => {
     }
     document.getElementById("errorhandle").innerText = ""
     localStorage.setItem("cf_handle", handle);
+    solvedSet = new Set();
+    attemptedSet = new Set();
+    submissionsList = [];
     loadUserData(handle);
     loadSubmissions(handle);
     loadProblems();

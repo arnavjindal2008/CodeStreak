@@ -1,11 +1,52 @@
-CodeStreak – Competitive Programming Tracker
+🚀 CodeStreak – Codeforces Tracker
 
-CodeStreak is a web-based application designed to help competitive programming students monitor their coding activity and stay updated with upcoming contests. The application allows users to enter their Codeforces or LeetCode username to view useful statistics such as the number of solved problems, difficulty-wise problem distribution, and recent submissions. It also provides information about upcoming programming contests so that users can plan their practice schedule effectively.
+CodeStreak is a lightweight web application designed to help competitive programmers track their progress on Codeforces and stay updated with upcoming contests. It provides insights into problem-solving patterns, enabling users to practice more strategically and consistently.
 
-The main objective of this project is to understand how to integrate public APIs using JavaScript and dynamically render real-time data on a webpage. The project also focuses on implementing important interactive features such as searching, filtering, and sorting using JavaScript array higher-order functions like filter() and sort().
+✨ Features
+📊 User Analytics
+Fetch and display user submission data
+Track solved problems and activity trends
+Analyze performance over time
+🎯 Problem Insights
+Difficulty-wise problem distribution
+Rating-based filtering for targeted practice
+Sorting mechanisms to organize problem sets
+💾 Local Storage Support
+Save user preferences locally
+Store contest reminders without a backend
+Ensure persistent user experience across sessions
+⚡ Interactive UI
+Dynamic data rendering using JavaScript
+Fast search and filtering capabilities
+Clean and responsive interface
+🔐 Demo Login Credentials
 
-This application uses the Codeforces Public API to fetch contest details and user submission data. The endpoints used include https://codeforces.com/api/contest.list to retrieve contest information and https://codeforces.com/api/user.status?handle={handle} to access user submissions and problem ratings. Additionally, an unofficial LeetCode Stats API (https://leetcode-stats-api.herokuapp.com/{username}) is used to display solved problem counts and difficulty breakdown.
+Use the following credentials to access the application:
 
-Planned features include a tab-based interface for switching between Codeforces and LeetCode tracking, contest search functionality, difficulty-based filtering of problems, and rating-wise sorting to support structured practice. Additional features such as dark mode toggle, loading indicators during API calls, and saving contest reminders using LocalStorage will enhance usability.
+Email: arnav.j25651@nst.rishihood.edu.in
+Password: Arnav@12345
 
-The project is built using HTML, CSS, and Vanilla JavaScript. To run the project, clone the repository, open the project folder, and launch the index.html file in a web browser.
+⚠️ Note: These credentials are for demonstration/testing purposes only.
+Also we can new accounts too.
+
+🧠 Learning Objectives
+
+This project was built to strengthen understanding of:
+
+API integration using JavaScript (fetch)
+Asynchronous programming and data handling
+DOM manipulation and dynamic UI updates
+LocalStorage for client-side persistence
+Array higher-order functions (map, filter, sort)
+🔌 API Integration
+
+CodeStreak uses the official Codeforces Public API:
+
+Contest List:
+https://codeforces.com/api/contest.list
+User Submissions:
+https://codeforces.com/api/user.status?handle={handle}
+🛠️ Tech Stack
+Frontend: HTML, CSS, Vanilla JavaScript
+Data Source: Codeforces Public API
+Storage: Browser LocalStorage
